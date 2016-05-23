@@ -1,0 +1,91 @@
+for-in 语句是一种精准的迭代语句，可以用来枚举对象的属性。
+语法：
+for (property in expression) statement
+
+示例：
+for (var propName in window) {
+  document.writeln(propName);
+}
+上述循环每次执行，都会讲window对象中的一个属性名赋值给propName，直到所有属性都被枚举一遍。
+其中，var 不是必须的，但是为了保证使用局部变量，建议使用var定义。
+
+对象的属性没有顺序，通过for-in循环输出的属性名顺序也不可预测。
+
+为了保证最大限度的兼容性，使用for-in循环之前，先检测确认该对象的值不是null或者undefined。
+
+for-in循环枚举的过程中，将会列出所有的属性——包括函数和原型中的属性——需要过滤不需要的的值。
+最为常用的是hasOwnProperty方法，以及使用 typeof 来排除函数。
+如下：
+var name;
+for (name in obj) {
+  if (typeof obj[name] !== 'function') {
+    document.writeln(name + ': ' + obj[name]);
+  }
+}
+
+/////////////////////////
+hasOwnProperty方法：
+
+hasOwnProperty()函数用于指示一个对象自身(不包括原型链)是否具有指定名称的属性。如果有，返回true，否则返回false。
+
+该方法属于Object对象，由于所有的对象都"继承"了Object的对象实例，因此几乎所有的实例对象都可以使用该方法。
+
+IE 5.5+、FireFox、Chrome、Safari、Opera等主流浏览器均支持该函数。
+
+语法:object.hasOwnProperty( propertyName )
+
+返回值:hasOwnProperty()函数的返回值为Boolean类型。如果对象object具有名称为propertyName的属性，则返回true，否则返回false。
+
+*此方法不会检查对象的原型链中是否存在该属性，该属性只有是对象本身的一个成员才会返回true。
+
+//*****示例&说明*****//
+//*****code start*****//
+
+function Site(){
+    this.name = "CodePlayer";
+    this.url = "http://www.jseveryday.cn";
+    this.sayHello = function(){
+        document.writeln("欢迎来到" + this.name);
+    };
+}
+
+var obj = {
+    engine: "PHP",
+    sayHi: function(){
+        document.writeln("欢迎访问" + this.url);
+    }
+};
+// 使用对象obj覆盖Site本身的prototype属性
+Site.prototype = obj;
+
+var s =  new Site();
+document.writeln( s.hasOwnProperty("name") ); // true
+document.writeln( s.hasOwnProperty("sayHello") ); // true
+
+// 以下属性继承自原型链，因此为false
+document.writeln( s.hasOwnProperty("engine") ); // false
+document.writeln( s.hasOwnProperty("sayHi") ); // false
+document.writeln( s.hasOwnProperty("toString") ); // false
+
+// 想要查看对象(包括原型链)是否具备指定的属性，可以使用in操作符
+document.writeln( "engine" in s ); // true
+document.writeln( "sayHi" in s ); // true
+document.writeln( "toString" in s ); // true
+
+//*******code end******//
+
+如果想要枚举的属性按照一定的顺序出现，那就要避免使用 for-in 循环，而要使用 for 循环代替。
+这需要先创建一个数组，其中以正确的顺序包含属性名，即预先知道该对象拥有哪些属性！
+
+var i;
+var properties = [
+  'first-name',
+  'second-name',
+  'last-name',
+  'profession'
+];
+for (i = 0; i < properties.length; i++) {
+  document.writeln(properties[i] + ': ' + obj[properties[i]]);
+}
+
+//*****all end*****//
